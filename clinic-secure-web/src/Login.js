@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Login = ({ setIsAuthenticated }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+  // Si el usuario ya está autenticado, redirigir al Dashboard
+  useEffect(() => {
+    if (localStorage.getItem('isAuthenticated') === 'true') {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    // Example: Validate credentials (you can replace this with real authentication logic)
+    // Simulación de autenticación (puedes conectar con una API real aquí)
     if (username === 'user' && password === 'password') {
-      navigate('/dashboard'); // Navigate to the dashboard
+      localStorage.setItem('isAuthenticated', 'true');
+      setIsAuthenticated(true); // Actualiza el estado en App.js
+      navigate('/dashboard');
     } else {
       alert('Invalid username or password');
     }
@@ -29,6 +38,7 @@ const Login = () => {
             onChange={(e) => setUsername(e.target.value)}
             style={styles.input}
             placeholder="Enter your username"
+            required
           />
         </div>
         <div style={styles.inputGroup}>
@@ -39,6 +49,7 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             style={styles.input}
             placeholder="Enter your password"
+            required
           />
         </div>
         <button type="submit" style={styles.button}>Login</button>
@@ -79,7 +90,7 @@ const styles = {
     fontWeight: 'bold',
   },
   input: {
-    width: '100%',
+    width: '90%',
     padding: '10px',
     fontSize: '14px',
     border: '1px solid #ccc',

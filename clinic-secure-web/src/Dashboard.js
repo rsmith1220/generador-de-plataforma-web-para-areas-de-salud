@@ -1,34 +1,38 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
-  // Sample list of patient names
+  const navigate = useNavigate(); // Hook para navegar
+
+  // Lista de pacientes
   const patients = [
     'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
-    'John Doe',
+    'Jane Smith',
+    'Michael Johnson',
+    'Emily Brown',
+    'William Davis',
+    'Olivia Martinez',
+    'James Wilson',
+    'Sophia Anderson',
+    'Benjamin Thomas',
+    'Emma White',
   ];
+
+  // Manejar el clic en un paciente
+  const handlePatientClick = (patientName) => {
+    navigate(`/patient/${encodeURIComponent(patientName)}`); // Redirige a la página del paciente
+  };
 
   return (
     <div style={styles.container}>
       <h1 style={styles.header}>Patients</h1>
       <ul style={styles.list}>
         {patients.map((patient, index) => (
-          <li key={index} style={styles.listItem}>
+          <li
+            key={index}
+            style={styles.listItem}
+            onClick={() => handlePatientClick(patient)}
+          >
             {patient}
           </li>
         ))}
@@ -61,6 +65,8 @@ const styles = {
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     fontSize: '1.2em',
     color: '#555',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
   },
 };
 
