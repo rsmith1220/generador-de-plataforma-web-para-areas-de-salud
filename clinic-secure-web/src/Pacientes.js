@@ -11,57 +11,56 @@ const Pacientes = () => {
       <button style={styles.backButton} onClick={() => navigate(-1)}>← Volver</button>
       <div style={styles.formContainer}>
         <div style={styles.section}>
-          <h2 style={styles.subHeader}>Personal Information</h2>
+          <h2 style={styles.subHeader}>Información del paciente</h2>
           <form>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Name:</label>
+              <label style={styles.label}>Nombre:</label>
               <input type="text" style={styles.input} />
             </div>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Gender:</label>
+              <label style={styles.label}>Género:</label>
               <div style={styles.radioGroup}>
                 <label>
-                  <input type="radio" name="gender" value="Male" /> Male
+                  <input type="radio" name="gender" value="Male" /> Masculino
                 </label>
                 <label>
-                  <input type="radio" name="gender" value="Female" /> Female
+                  <input type="radio" name="gender" value="Female" /> Femenino
+                </label>
+                <label>
+                  <input type="radio" name="gender" value="Other" /> Otro
                 </label>
               </div>
             </div>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Date of Birth:</label>
+              <label style={styles.label}>Fecha de nacimiento:</label>
               <input type="date" style={styles.input} />
             </div>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Marital Status:</label>
+              <label style={styles.label}>Estado civil:</label>
               <select style={styles.input}>
-                <option>Single</option>
-                <option>Married</option>
-                <option>Widowed</option>
-                <option>Divorced</option>
+                <option>Soltero</option>
+                <option>Casado</option>
+                <option>Viudo</option>
+                <option>Divorciado</option>
               </select>
             </div>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Blood Type:</label>
+              <label style={styles.label}>Tipo de sangre:</label>
               <input type="text" style={styles.input} />
             </div>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Nationality:</label>
+              <label style={styles.label}>Ocupación:</label>
               <input type="text" style={styles.input} />
             </div>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Occupation:</label>
-              <input type="text" style={styles.input} />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Email Address:</label>
+              <label style={styles.label}>Correo:</label>
               <input type="email" style={styles.input} />
             </div>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Address:</label>
+              <label style={styles.label}>Dirección:</label>
               <textarea style={styles.textarea}></textarea>
             </div>
-            <button type="submit" style={styles.button}>Save</button>
+            <button type="submit" style={styles.button}>Guardar</button>
           </form>
         </div>
       </div>
