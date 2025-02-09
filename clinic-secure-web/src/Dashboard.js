@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const navigate = useNavigate(); // Hook para navegar
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Lista de pacientes
   const patients = [
@@ -18,6 +19,11 @@ const Dashboard = () => {
     'Emma White',
   ];
 
+  // Filtrar pacientes según la búsqueda
+  const filteredPatients = patients.filter((patient) =>
+    patient.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   // Manejar el clic en un paciente
   const handlePatientClick = (patientName) => {
     navigate(`/patient/${encodeURIComponent(patientName)}`); // Redirige a la página del paciente
@@ -25,9 +31,16 @@ const Dashboard = () => {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.header}>Patients</h1>
+      <h1 style={styles.header}>Pacientes</h1>
+      <input
+        type="text"
+        placeholder="Buscar paciente..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        style={styles.searchBox}
+      />
       <ul style={styles.list}>
-        {patients.map((patient, index) => (
+        {filteredPatients.map((patient, index) => (
           <li
             key={index}
             style={styles.listItem}
@@ -52,6 +65,14 @@ const styles = {
     fontSize: '2em',
     marginBottom: '20px',
     color: '#333',
+  },
+  searchBox: {
+    width: '100%',
+    padding: '10px',
+    fontSize: '1em',
+    marginBottom: '20px',
+    borderRadius: '5px',
+    border: '1px solid #ccc',
   },
   list: {
     listStyleType: 'none',

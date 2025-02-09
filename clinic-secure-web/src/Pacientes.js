@@ -1,64 +1,77 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const Pacientes = () => {
-  const { patientName } = useParams(); // Obtiene el nombre del paciente desde la URL
+  const { patientName } = useParams();
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    nombre: decodeURIComponent(patientName) || '',
+    genero: '',
+    fechaNacimiento: '',
+    estadoCivil: '',
+    tipoSangre: '',
+    ocupacion: '',
+    correo: '',
+    direccion: '',
+    telefono: '',
+    seguro: '',
+    contactoEmergencia: { nombre: '', telefono: '' },
+    historialClinico: '',
+    alergias: '',
+    medicamentos: '',
+  });
+
+  useEffect(() => {
+    // Aquí podrías cargar datos desde una API si es necesario
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Datos guardados:', formData);
+    // Aquí podrías enviar los datos a una API
+  };
+
   return (
     <div style={styles.container}>
       <h1 style={styles.header}>Información del Paciente</h1>
-      <p style={styles.text}>Nombre: {decodeURIComponent(patientName)}</p>
       <button style={styles.backButton} onClick={() => navigate(-1)}>← Volver</button>
       <div style={styles.formContainer}>
         <div style={styles.section}>
           <h2 style={styles.subHeader}>Información del paciente</h2>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div style={styles.formGroup}>
               <label style={styles.label}>Nombre:</label>
-              <input type="text" style={styles.input} />
+              <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} style={styles.input} />
             </div>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Género:</label>
-              <div style={styles.radioGroup}>
-                <label>
-                  <input type="radio" name="gender" value="Male" /> Masculino
-                </label>
-                <label>
-                  <input type="radio" name="gender" value="Female" /> Femenino
-                </label>
-                <label>
-                  <input type="radio" name="gender" value="Other" /> Otro
-                </label>
-              </div>
+              <label style={styles.label}>Teléfono:</label>
+              <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} style={styles.input} />
             </div>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Fecha de nacimiento:</label>
-              <input type="date" style={styles.input} />
+              <label style={styles.label}>Seguro Médico:</label>
+              <input type="text" name="seguro" value={formData.seguro} onChange={handleChange} style={styles.input} />
             </div>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Estado civil:</label>
-              <select style={styles.input}>
-                <option>Soltero</option>
-                <option>Casado</option>
-                <option>Viudo</option>
-                <option>Divorciado</option>
-              </select>
+              <label style={styles.label}>Contacto de Emergencia:</label>
+              <input type="text" name="contactoEmergencia.nombre" placeholder="Nombre" value={formData.contactoEmergencia.nombre} onChange={handleChange} style={styles.input} />
+              <input type="text" name="contactoEmergencia.telefono" placeholder="Teléfono" value={formData.contactoEmergencia.telefono} onChange={handleChange} style={styles.input} />
             </div>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Tipo de sangre:</label>
-              <input type="text" style={styles.input} />
+              <label style={styles.label}>Historial Clínico:</label>
+              <textarea name="historialClinico" value={formData.historialClinico} onChange={handleChange} style={styles.textarea}></textarea>
             </div>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Ocupación:</label>
-              <input type="text" style={styles.input} />
+              <label style={styles.label}>Alergias:</label>
+              <textarea name="alergias" value={formData.alergias} onChange={handleChange} style={styles.textarea}></textarea>
             </div>
             <div style={styles.formGroup}>
-              <label style={styles.label}>Correo:</label>
-              <input type="email" style={styles.input} />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Dirección:</label>
-              <textarea style={styles.textarea}></textarea>
+              <label style={styles.label}>Medicamentos:</label>
+              <textarea name="medicamentos" value={formData.medicamentos} onChange={handleChange} style={styles.textarea}></textarea>
             </div>
             <button type="submit" style={styles.button}>Guardar</button>
           </form>
@@ -67,6 +80,7 @@ const Pacientes = () => {
     </div>
   );
 };
+
 
 const styles = {
   container: {
@@ -131,7 +145,7 @@ const styles = {
     fontSize: '1em',
   },
   textarea: {
-    width: '100%',
+    width: '90%',
     padding: '10px',
     border: '1px solid #ccc',
     borderRadius: '5px',
