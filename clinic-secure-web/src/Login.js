@@ -1,30 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Auth } from 'aws-amplify';
+import awsExports from '../aws-exports'; // Importa la config de Cognito
+import { Amplify } from 'aws-amplify';
+
+Amplify.configure(awsExports);
 
 const Login = ({ setIsAuthenticated }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  // Si el usuario ya está autenticado, redirigir al Dashboard
   useEffect(() => {
     if (localStorage.getItem('isAuthenticated') === 'true') {
       navigate('/dashboard');
     }
   }, [navigate]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // Simulación de autenticación (puedes conectar con una API real aquí)
-    if (username === 'user' && password === 'password') {
+    try {
+      const user = await Auth.signIn(username, password);
       localStorage.setItem('isAuthenticated', 'true');
-      setIsAuthenticated(true); // Actualiza el estado en App.js
+      setIsAuthenticated(true);
+      await guardarUsuario(username, user.attributes.email); // Guarda en DynamoDB
       navigate('/dashboard');
-    } else {
-      alert('Invalid username or password');
+    } catch (error) {
+      alert('Error en login: ' + error.message);
     }
   };
+  
+
+  const guardarUsuario = async (username, email) => {
+    try {
+      await axios.post("https://lfidsaqrp7.execute-api.us-east-1.amazonaws.com/dev/guardarUsuario", {
+        username,
+        email,
+      });
+      console.log("Usuario guardado en DynamoDB!");
+    } catch (error) {
+      console.error("Error al guardar usuario:", error);
+    }
+  };
+  
 
   return (
     <div style={styles.container}>
@@ -57,6 +75,7 @@ const Login = ({ setIsAuthenticated }) => {
     </div>
   );
 };
+
 
 const styles = {
   container: {
