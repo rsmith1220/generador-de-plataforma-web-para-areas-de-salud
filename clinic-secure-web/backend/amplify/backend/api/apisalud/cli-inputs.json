@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "paths": {
+    "/usuarios": {
+      "name": "/usuarios",
+      "lambdaFunction": "backplataformasalud1b637bac",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/pacientes": {
+      "name": "/pacientes",
+      "lambdaFunction": "backplataformasalud1feb7eb7",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}

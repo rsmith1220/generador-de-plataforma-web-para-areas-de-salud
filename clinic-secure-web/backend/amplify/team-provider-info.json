@@ -1,0 +1,30 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-backplataformasalud-dev-93deb-authRole",
+      "UnauthRoleArn": "arn:aws:iam::495599743005:role/amplify-backplataformasalud-dev-93deb-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::495599743005:role/amplify-backplataformasalud-dev-93deb-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-backplataformasalud-dev-93deb-deployment",
+      "UnauthRoleName": "amplify-backplataformasalud-dev-93deb-unauthRole",
+      "StackName": "amplify-backplataformasalud-dev-93deb",
+      "StackId": "arn:aws:cloudformation:us-east-1:495599743005:stack/amplify-backplataformasalud-dev-93deb/77a5ab30-f084-11ef-b9f3-12ef48d1bc4f",
+      "AmplifyAppId": "d3ei1klnem26ql"
+    },
+    "categories": {
+      "function": {
+        "backplataformasalud1b637bac": {
+          "deploymentBucketName": "amplify-backplataformasalud-dev-93deb-deployment",
+          "s3Key": "amplify-builds/backplataformasalud1b637bac-654561436a5774714866-build.zip"
+        },
+        "backplataformasalud1feb7eb7": {
+          "deploymentBucketName": "amplify-backplataformasalud-dev-93deb-deployment",
+          "s3Key": "amplify-builds/backplataformasalud1feb7eb7-634f4748343351656c45-build.zip"
+        }
+      },
+      "api": {
+        "apisalud": {}
+      }
+    }
+  }
+}

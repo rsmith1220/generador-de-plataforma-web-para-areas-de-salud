@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Auth } from 'aws-amplify';
-import awsExports from '../aws-exports'; // Importa la config de Cognito
-import { Amplify } from 'aws-amplify';
+import { signIn } from '@aws-amplify/auth';
 
-Amplify.configure(awsExports);
 
 const Login = ({ setIsAuthenticated }) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,43 +17,45 @@ const Login = ({ setIsAuthenticated }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const user = await Auth.signIn(username, password);
-      localStorage.setItem('isAuthenticated', 'true');
-      setIsAuthenticated(true);
-      await guardarUsuario(username, user.attributes.email); // Guarda en DynamoDB
-      navigate('/dashboard');
-    } catch (error) {
-      alert('Error en login: ' + error.message);
-    }
-  };
-  
+    setError('');
 
-  const guardarUsuario = async (username, email) => {
     try {
-      await axios.post("https://lfidsaqrp7.execute-api.us-east-1.amazonaws.com/dev/guardarUsuario", {
-        username,
-        email,
-      });
-      console.log("Usuario guardado en DynamoDB!");
-    } catch (error) {
-      console.error("Error al guardar usuario:", error);
+        let user = await signIn({ username: email, password });
+
+        // Si Cognito requiere cambio de contraseña
+        if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
+            const newPassword = prompt("Cambia tu contraseña:");
+            if (newPassword) {
+                user = await user.completeNewPassword(newPassword);
+                console.log('Contraseña actualizada con éxito:', user);
+            } else {
+                throw new Error("Debe ingresar una nueva contraseña.");
+            }
+        }
+
+        console.log('Usuario autenticado:', user);
+        localStorage.setItem('isAuthenticated', 'true');
+        setIsAuthenticated(true);
+        navigate('/dashboard');
+    } catch (err) {
+        console.error('Error al iniciar sesión:', err);
+        setError(err.message || 'Error al iniciar sesión');
     }
-  };
-  
+};
 
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Login</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.inputGroup}>
-          <label style={styles.label}>Username</label>
+          <label style={styles.label}>Email</label> {/* Cambié Username -> Email */}
           <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             style={styles.input}
-            placeholder="Enter your username"
+            placeholder="Enter your email"
             required
           />
         </div>
@@ -75,7 +75,6 @@ const Login = ({ setIsAuthenticated }) => {
     </div>
   );
 };
-
 
 const styles = {
   container: {

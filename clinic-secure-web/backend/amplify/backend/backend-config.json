@@ -1,0 +1,72 @@
+{
+  "api": {
+    "apisalud": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "backplataformasalud1b637bac"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "backplataformasalud1feb7eb7"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    }
+  },
+  "function": {
+    "backplataformasalud1b637bac": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "backplataformasalud1feb7eb7": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_backplataformasalud1b637bac_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "backplataformasalud1b637bac"
+        }
+      ]
+    },
+    "AMPLIFY_function_backplataformasalud1b637bac_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "backplataformasalud1b637bac"
+        }
+      ]
+    },
+    "AMPLIFY_function_backplataformasalud1feb7eb7_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "backplataformasalud1feb7eb7"
+        }
+      ]
+    },
+    "AMPLIFY_function_backplataformasalud1feb7eb7_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "backplataformasalud1feb7eb7"
+        }
+      ]
+    }
+  }
+}
