@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signIn } from '@aws-amplify/auth';
 
-
 const Login = ({ setIsAuthenticated }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,9 +21,9 @@ const Login = ({ setIsAuthenticated }) => {
     try {
         let user = await signIn({ username: email, password });
 
-        // Si Cognito requiere cambio de contraseña
+        // Si el usuario necesita cambiar su contraseña
         if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
-            const newPassword = prompt("Cambia tu contraseña:");
+            const newPassword = prompt("Cambia tu contraseña (mínimo 8 caracteres, incluir mayúscula, minúscula y número):");
             if (newPassword) {
                 user = await user.completeNewPassword(newPassword);
                 console.log('Contraseña actualizada con éxito:', user);
@@ -41,7 +40,7 @@ const Login = ({ setIsAuthenticated }) => {
         console.error('Error al iniciar sesión:', err);
         setError(err.message || 'Error al iniciar sesión');
     }
-};
+  };
 
   return (
     <div style={styles.container}>
@@ -49,7 +48,7 @@ const Login = ({ setIsAuthenticated }) => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.inputGroup}>
-          <label style={styles.label}>Email</label> {/* Cambié Username -> Email */}
+          <label style={styles.label}>Email</label>
           <input
             type="email"
             value={email}

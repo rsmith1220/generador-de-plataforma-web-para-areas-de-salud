@@ -7,16 +7,16 @@ const Dashboard = () => {
 
   // Lista de pacientes
   const patients = [
-    'John Doe',
-    'Jane Smith',
-    'Michael Johnson',
-    'Emily Brown',
-    'William Davis',
-    'Olivia Martinez',
-    'James Wilson',
-    'Sophia Anderson',
-    'Benjamin Thomas',
-    'Emma White',
+    'Paciente 1',
+    'Paciente 2',
+    'Paciente 3',
+    'Paciente 4',
+    'Paciente 5',
+    'Paciente 6',
+    'Paciente 7',
+    'Paciente 8',
+    'Paciente 9',
+    'Paciente 10',
   ];
 
   // Filtrar pacientes según la búsqueda
@@ -29,8 +29,17 @@ const Dashboard = () => {
     navigate(`/patient/${encodeURIComponent(patientName)}`); // Redirige a la página del paciente
   };
 
+  // Manejar el cierre de sesión
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated'); // Elimina la clave de autenticación
+    navigate('/login'); // Redirige a la página de login
+  };
+
   return (
     <div style={styles.container}>
+      <button onClick={handleLogout} style={styles.logoutButton}>
+        Cerrar sesión
+      </button>
       <h1 style={styles.header}>Pacientes</h1>
       <input
         type="text"
@@ -60,6 +69,20 @@ const styles = {
     backgroundColor: '#f9f9f9',
     minHeight: '100vh',
     fontFamily: 'Arial, sans-serif',
+    position: 'relative',
+  },
+  logoutButton: {
+    position: 'absolute',
+    top: '20px',
+    right: '20px',
+    padding: '10px 20px',
+    fontSize: '14px',
+    backgroundColor: '#6c5ce7', // Color morado
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
   },
   header: {
     fontSize: '2em',
@@ -79,15 +102,15 @@ const styles = {
     padding: 0,
   },
   listItem: {
-    padding: '10px',
-    marginBottom: '10px',
+    padding: '15px',
+    marginBottom: '15px',
     backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     fontSize: '1.2em',
     color: '#555',
     cursor: 'pointer',
-    transition: 'background-color 0.2s',
+    transition: 'background-color 0.2s ease, box-shadow 0.2s ease',
   },
 };
 
