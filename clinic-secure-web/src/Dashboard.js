@@ -1,64 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
-  const navigate = useNavigate(); // Hook para navegar
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [patients, setPatients] = useState([]);
 
-  // Lista de pacientes
-  const patients = [
-    'Paciente 1',
-    'Paciente 2',
-    'Paciente 3',
-    'Paciente 4',
-    'Paciente 5',
-    'Paciente 6',
-    'Paciente 7',
-    'Paciente 8',
-    'Paciente 9',
-    'Paciente 10',
-  ];
-
+  useEffect(() => {
+    fetch('http://localhost:5000/api/patients')
+      .then(response => response.json())
+      .then(data => {
+        console.log("Datos recibidos:", data);  // Verifica la respuesta en la consola
+        setPatients(Array.isArray(data) ? data : []); // Asegura que sea un array
+      })
+      .catch(error => console.error('Error cargando pacientes:', error));
+  }, []);
+  
   // Filtrar pacientes según la búsqueda
-  const filteredPatients = patients.filter((patient) =>
-    patient.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredPatients = patients.filter(patient =>
+    patient.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Manejar el clic en un paciente
   const handlePatientClick = (patientName) => {
-    navigate(`/patient/${encodeURIComponent(patientName)}`); // Redirige a la página del paciente
+    navigate(`/patient/${encodeURIComponent(patientName)}`);
   };
 
   // Manejar el cierre de sesión
   const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated'); // Elimina la clave de autenticación
-    navigate('/login'); // Redirige a la página de login
+    localStorage.removeItem('isAuthenticated');
+    navigate('/login');
   };
 
   return (
-    <div style={styles.container}>
-      <button onClick={handleLogout} style={styles.logoutButton}>
-        Cerrar sesión
-      </button>
-      <h1 style={styles.header}>Pacientes</h1>
+    <div>
+      <h1>Dashboard de Pacientes</h1>
       <input
         type="text"
         placeholder="Buscar paciente..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        style={styles.searchBox}
       />
-      <ul style={styles.list}>
-        {filteredPatients.map((patient, index) => (
-          <li
-            key={index}
-            style={styles.listItem}
-            onClick={() => handlePatientClick(patient)}
-          >
-            {patient}
+      <ul>
+        {filteredPatients.map(patient => (
+          <li key={patient.id} onClick={() => handlePatientClick(patient.nombre)}>
+            {patient.nombre}
           </li>
         ))}
       </ul>
+      <button onClick={handleLogout}>Cerrar Sesión</button>
     </div>
   );
 };
