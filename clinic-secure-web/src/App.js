@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { getData, sendData } from './services/api';
 import Login from './Login';
 import Dashboard from './Dashboard';
-import Pacientes from './Pacientes'; // Importa el nuevo componente
+import Pacientes from './Pacientes';
+import Register from './Register';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -13,9 +14,11 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-        <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />} />
         <Route path="/patient/:patientName" element={isAuthenticated ? <Pacientes /> : <Navigate to="/" />} />
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
   );
