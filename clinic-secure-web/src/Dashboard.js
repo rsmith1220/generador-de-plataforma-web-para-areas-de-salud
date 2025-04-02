@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Dashboard.css';
-
+import './Dashboard.css'; // 🔹 Importar CSS
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
   const [patients, setPatients] = useState([]);
 
   // 🔹 Verificar si el usuario está autenticado
@@ -17,7 +17,6 @@ const Dashboard = () => {
       return;
     }
 
-    // 🔹 Obtener los pacientes de la clínica
     fetch(`http://localhost:5000/api/patients?clinica_id=${clinicaId}`)
       .then(response => response.json())
       .then(data => {
@@ -26,6 +25,11 @@ const Dashboard = () => {
       })
       .catch(error => console.error('Error cargando pacientes:', error));
   }, [navigate]);
+
+  // 🔹 Filtrar pacientes según la búsqueda
+  const filteredPatients = patients.filter(patient =>
+    patient.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // 🔹 Manejar cierre de sesión
   const handleLogout = () => {
@@ -36,37 +40,31 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <h1>Dashboard de Pacientes</h1>
-      <button onClick={handleLogout} className="logout-button">Cerrar Sesión</button>
-      
-      <table className="patients-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Edad</th>
-            <th>Género</th>
-            <th>Teléfono</th>
-          </tr>
-        </thead>
-        <tbody>
-          {patients.length > 0 ? (
-            patients.map(patient => (
-              <tr key={patient.id}>
-                <td>{patient.id}</td>
-                <td>{patient.nombre}</td>
-                <td>{patient.edad}</td>
-                <td>{patient.genero}</td>
-                <td>{patient.telefono}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="5">No hay pacientes registrados.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <div className="dashboard-header">
+        <h1>Pacientes</h1>
+        <button className="logout-button" onClick={handleLogout}>Cerrar sesión</button>
+      </div>
+
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Buscar paciente"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      <div className="patients-list">
+        {filteredPatients.length > 0 ? (
+          filteredPatients.map((patient, index) => (
+            <div key={index} className="patient-card">
+              {patient.nombre}
+            </div>
+          ))
+        ) : (
+          <p className="no-patients">No hay pacientes registrados.</p>
+        )}
+      </div>
     </div>
   );
 };

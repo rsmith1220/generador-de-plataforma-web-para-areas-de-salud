@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Register.css'; // 🔹 Importar CSS
 
 const Register = () => {
+  const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [clinicaId, setClinicaId] = useState('');
@@ -12,10 +13,15 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/register', { // Ajusta la URL si es necesario
+      const response = await fetch('http://localhost:5000/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, clinica_id: clinicaId })
+        body: JSON.stringify({
+          nombre,
+          email,
+          password,
+          clinica_id: clinicaId
+        })
       });
 
       const data = await response.json();
@@ -24,6 +30,7 @@ const Register = () => {
         alert('Usuario registrado exitosamente');
         navigate('/login'); // Redirige al login después de registrarse
       } else {
+        console.error('Error en respuesta:', data);
         alert(data.error || 'Error al registrar usuario');
       }
     } catch (error) {
@@ -36,6 +43,13 @@ const Register = () => {
     <div className="register-container">
       <h2 className="register-title">Regístrate</h2>
       <form className="register-form" onSubmit={handleRegister}>
+        <input
+          type="text"
+          placeholder="Nombre"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          required
+        />
         <input
           type="email"
           placeholder="Correo"
