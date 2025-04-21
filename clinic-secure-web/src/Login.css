@@ -1,62 +1,67 @@
-/* Estilos generales */
+/* Login.css */
+
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #FAF7FC;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-  }
-  
-  /* Contenedor del formulario */
-  .login-container {
-    background: white;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 350px;
-  }
-  
-  /* Título */
-  .login-title {
-    font-size: 22px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  /* Formulario */
-  .login-form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Inputs */
-  .login-form input {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    text-align: center;
-    width: 93%;
-  }
-  
-  /* Botón de login */
-  .login-button {
-    background-color: #6D4AB0; /* Color morado */
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  .login-button:hover {
-    background-color: #5A3D90;
-  }
-  
+  margin: 0;
+  padding: 0;
+  background-color: #f7f4f9;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Contenedor central */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Formulario sin caja blanca */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.8rem;
+  width: 100%;
+  max-width: 360px;
+}
+
+/* Título */
+.login-form h2 {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #111;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Inputs */
+.login-form input {
+  width: 100%;
+  padding: 12px 18px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.login-form input:focus {
+  border-color: #6c5ce7;
+}
+
+/* Botón */
+.login-form button {
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+  background-color: #5a4bd0;
+}

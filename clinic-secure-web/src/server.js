@@ -20,11 +20,11 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
+// === LOGIN ===
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Buscar el usuario en la base de datos
     const result = await pool.query(
       'SELECT id, nombre, email, password, clinica_id FROM usuarios WHERE email = $1 LIMIT 1',
       [email]
@@ -35,30 +35,54 @@ app.post('/api/login', async (req, res) => {
     }
 
     const user = result.rows[0];
-
-    // Comparar la contraseña ingresada con la almacenada
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ error: 'Contraseña incorrecta' });
     }
 
-    // Enviar datos del usuario sin la contraseña
     res.json({
       id: user.id,
       nombre: user.nombre,
       email: user.email,
       clinica_id: user.clinica_id
     });
-
   } catch (err) {
     console.error('Error en el login:', err);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
 
+// === REGISTRO ===
+app.post('/api/register', async (req, res) => {
+  const { nombre, email, password, clinica_id } = req.body;
 
+  if (!nombre || !email || !password || !clinica_id) {
+    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+  }
+
+  try {
+    const userCheck = await pool.query('SELECT id FROM usuarios WHERE email = $1', [email]);
+    if (userCheck.rows.length > 0) {
+      return res.status(400).json({ error: 'El usuario ya está registrado' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const result = await pool.query(
+      'INSERT INTO usuarios (nombre, email, password, clinica_id) VALUES ($1, $2, $3, $4) RETURNING id, nombre, email, clinica_id',
+      [nombre, email, hashedPassword, clinica_id]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error registrando usuario:', err);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+// === LISTAR PACIENTES POR CLÍNICA ===
 app.get('/api/patients', async (req, res) => {
-  const clinicaId = req.query.clinica_id; // Obtener la clínica desde el frontend
+  const clinicaId = req.query.clinica_id;
 
   if (!clinicaId) {
     return res.status(400).json({ error: 'No se proporcionó una clínica válida' });
@@ -76,57 +100,28 @@ app.get('/api/patients', async (req, res) => {
   }
 });
 
-
-
-
-// Verificar la conexión
-pool.connect()
-  .then(() => console.log('✅ Conectado a la base de datos PostgreSQL en RDS'))
-  .catch(err => console.error('❌ Error de conexión:', err));
-
-// Endpoint para obtener todos los pacientes
-app.get('/api/patients', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM pacientes');
-    res.json(result.rows);
-  } catch (err) {
-    console.error('❌ Error obteniendo pacientes:', err);
-    res.status(500).json({ error: 'Error en el servidor' });
-  }
-});
-
-// 🔹 Registrar usuario con contraseña encriptada
-app.post('/api/register', async (req, res) => {
-  const { nombre, email, password, clinica_id } = req.body;
-
-  if (!nombre || !email || !password || !clinica_id) {
-    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
-  }
+// === OBTENER PACIENTE POR ID ===
+app.get('/api/patients/:id', async (req, res) => {
+  const { id } = req.params;
 
   try {
-    // Verificar si el usuario ya existe
-    const userCheck = await pool.query('SELECT id FROM usuarios WHERE email = $1', [email]);
-    if (userCheck.rows.length > 0) {
-      return res.status(400).json({ error: 'El usuario ya está registrado' });
-    }
-
-    // Hashear la contraseña antes de guardarla
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Insertar el nuevo usuario en la base de datos
     const result = await pool.query(
-      'INSERT INTO usuarios (nombre, email, password, clinica_id) VALUES ($1, $2, $3, $4) RETURNING id, nombre, email, clinica_id',
-      [nombre, email, hashedPassword, clinica_id]
+      'SELECT id, nombre, edad, genero, telefono FROM pacientes WHERE id = $1',
+      [id]
     );
 
-    res.status(201).json(result.rows[0]); // Devolvemos el usuario creado sin la contraseña
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Paciente no encontrado' });
+    }
+
+    res.json(result.rows[0]);
   } catch (err) {
-    console.error('Error registrando usuario:', err);
+    console.error('❌ Error obteniendo paciente por ID:', err);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
 
-// Endpoint para agregar un paciente
+// === AGREGAR PACIENTE ===
 app.post('/api/patients', async (req, res) => {
   const { nombre, edad, genero, telefono } = req.body;
 
@@ -146,7 +141,7 @@ app.post('/api/patients', async (req, res) => {
   }
 });
 
-// Endpoint para actualizar un paciente
+// === ACTUALIZAR PACIENTE ===
 app.put('/api/patients/:id', async (req, res) => {
   const { id } = req.params;
   const { nombre, edad, genero, telefono } = req.body;
@@ -168,12 +163,15 @@ app.put('/api/patients/:id', async (req, res) => {
   }
 });
 
-// Endpoint para eliminar un paciente
+// === ELIMINAR PACIENTE ===
 app.delete('/api/patients/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query('DELETE FROM pacientes WHERE id = $1 RETURNING *', [id]);
+    const result = await pool.query(
+      'DELETE FROM pacientes WHERE id = $1 RETURNING *',
+      [id]
+    );
 
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Paciente no encontrado' });
@@ -186,7 +184,11 @@ app.delete('/api/patients/:id', async (req, res) => {
   }
 });
 
-// Iniciar el servidor
+// === CONEXIÓN Y ARRANQUE ===
+pool.connect()
+  .then(() => console.log('✅ Conectado a la base de datos PostgreSQL en RDS'))
+  .catch(err => console.error('❌ Error de conexión:', err));
+
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });
