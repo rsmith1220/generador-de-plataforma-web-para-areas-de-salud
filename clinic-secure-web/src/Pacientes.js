@@ -10,9 +10,7 @@ const Pacientes = () => {
   useEffect(() => {
     fetch(`http://localhost:5000/api/patients/${id}`)
       .then(res => res.json())
-      .then(data => {
-        setPaciente(data);
-      })
+      .then(data => setPaciente(data))
       .catch(err => {
         console.error("❌ Error al cargar paciente:", err);
       });
@@ -23,19 +21,26 @@ const Pacientes = () => {
   }
 
   return (
-    <div className="paciente-container">
-      <div className="paciente-card">
-        <h2 className="paciente-nombre">{paciente.nombre}</h2>
-        <div className="paciente-info">
+    <div className="paciente-container sin-caja">
+      <h2 className="paciente-nombre">{paciente.nombre}</h2>
+
+      <div className="paciente-info">
+        <img
+          src={paciente.foto_url || "https://via.placeholder.com/150"}
+          alt={`Foto de ${paciente.nombre}`}
+          className="paciente-foto"
+        />
+
+        <div className="paciente-datos">
           <div className="paciente-col">
             <p>Edad: {paciente.edad}</p>
             <p>Género: {paciente.genero}</p>
             <p>Teléfono: {paciente.telefono}</p>
           </div>
           <div className="paciente-col">
-            <p>Cirugías</p>
-            <p>Tipo de sangre</p>
-            <p>Medicamentos</p>
+            <p>Cirugías: {paciente.cirugias || "No registrado"}</p>
+            <p>Tipo de sangre: {paciente.tipo_sangre || "No registrado"}</p>
+            <p>Medicamentos: {paciente.medicamentos || "No registrado"}</p>
           </div>
         </div>
       </div>

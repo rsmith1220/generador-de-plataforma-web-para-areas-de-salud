@@ -80,7 +80,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// === LISTAR PACIENTES POR CLÍNICA ===
+// === LISTAR PACIENTES POR CLÍNICA (con más información) ===
 app.get('/api/patients', async (req, res) => {
   const clinicaId = req.query.clinica_id;
 
@@ -90,7 +90,11 @@ app.get('/api/patients', async (req, res) => {
 
   try {
     const result = await pool.query(
-      'SELECT id, nombre, edad, genero, telefono FROM pacientes WHERE clinica_id = $1',
+      `SELECT id, nombre, edad, genero, telefono, clinica_id, 
+              altura_cm, peso_kg, tipo_sangre, alergias, medicamentos, cirugias,
+              telefono_casa, telefono_celular
+       FROM pacientes
+       WHERE clinica_id = $1`,
       [clinicaId]
     );
     res.json(result.rows);
@@ -100,13 +104,18 @@ app.get('/api/patients', async (req, res) => {
   }
 });
 
-// === OBTENER PACIENTE POR ID ===
+
+// === OBTENER PACIENTE POR ID (con más información) ===
 app.get('/api/patients/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
     const result = await pool.query(
-      'SELECT id, nombre, edad, genero, telefono FROM pacientes WHERE id = $1',
+      `SELECT id, nombre, edad, genero, telefono, clinica_id, 
+              altura_cm, peso_kg, tipo_sangre, alergias, medicamentos, cirugias,
+              telefono_casa, telefono_celular
+       FROM pacientes
+       WHERE id = $1`,
       [id]
     );
 
