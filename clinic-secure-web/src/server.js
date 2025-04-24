@@ -198,6 +198,8 @@ pool.connect()
   .then(() => console.log('✅ Conectado a la base de datos PostgreSQL en RDS'))
   .catch(err => console.error('❌ Error de conexión:', err));
 
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+// });
+
+module.exports = app;
