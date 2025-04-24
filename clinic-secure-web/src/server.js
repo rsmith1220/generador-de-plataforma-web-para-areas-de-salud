@@ -5,9 +5,28 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 
 const app = express();
+app.disable('x-powered-by'); // 🔒 Oculta versión de Express
+
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// 🔒 CORS seguro: acepta localhost:3000 y vite en 5173
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  process.env.FRONTEND_URL // permite agregar URL de producción desde .env
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Configuración de conexión a RDS PostgreSQL
@@ -17,7 +36,9 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   port: process.env.DB_PORT,
-  ssl: { rejectUnauthorized: false }
+  ssl: process.env.NODE_ENV === 'production'
+    ? { rejectUnauthorized: true }
+    : false
 });
 
 // === LOGIN ===
