@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import './Register.css'; // 🔹 Importar CSS
 
 const Register = () => {
@@ -49,6 +49,7 @@ const Register = () => {
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           required
+          autoComplete="name"
         />
         <input
           type="email"
@@ -56,6 +57,7 @@ const Register = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          autoComplete="email"
         />
         <input
           type="password"
@@ -63,6 +65,7 @@ const Register = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          autoComplete="new-password"
         />
         <input
           type="number"

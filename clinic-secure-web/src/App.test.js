@@ -1,14 +1,9 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 
-test('renderiza la app sin errores y muestra algo de la UI', () => {
-  render(
-    <MemoryRouter>
-      <App />
-    </MemoryRouter>
-  );
+test('renderiza la app sin errores y muestra el formulario de login', () => {
+  render(<App />);
 
-  const texto = screen.getByText(/login|dashboard|pacientes/i);
-  expect(texto).toBeInTheDocument();
+  const titulo = screen.getByText(/inicia sesión/i);
+  expect(titulo).toBeInTheDocument();
 });
