@@ -1,0 +1,6 @@
+projectKey=secure-web
+serverUrl=http://localhost:9000
+serverVersion=10.7.0.96327
+dashboardUrl=http://localhost:9000/dashboard?id=secure-web
+ceTaskId=b83075c1-041d-4a83-8d62-7865d9d01749
+ceTaskUrl=http://localhost:9000/api/ce/task?id=b83075c1-041d-4a83-8d62-7865d9d01749
