@@ -1,7 +1,7 @@
 module.exports = {
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageReporters: ['lcov', 'text'],
-  testMatch: ['**/src/__tests__/**/*.test.js', '**/src/**/*.test.js']
+  testMatch: ['**/src/**/?(*.)+(spec|test).[jt]s?(x)']
 };
