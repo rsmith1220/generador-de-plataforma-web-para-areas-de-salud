@@ -30,7 +30,7 @@ app.use(cors({
 app.use(express.json());
 
 // Configuración de conexión a RDS PostgreSQL
-const pool = new Pool({
+const createPool = () => new Pool({
   host: process.env.DB_HOST, 
   user: process.env.DB_USER, 
   password: process.env.DB_PASSWORD,
@@ -40,6 +40,8 @@ const pool = new Pool({
     ? { rejectUnauthorized: true }
     : false
 });
+
+const pool = createPool();
 
 // === LOGIN ===
 app.post('/api/login', async (req, res) => {
