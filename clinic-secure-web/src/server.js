@@ -215,7 +215,7 @@ app.delete('/api/patients/:id', async (req, res) => {
 });
 
 // === CONEXIÓN Y ARRANQUE ===
-if (typeof pool.connect === 'function') {
+if (process.env.NODE_ENV !== 'test' && typeof pool.connect === 'function') {
   pool.connect()
     .then(() => console.log('✅ Conectado a la base de datos PostgreSQL en RDS'))
     .catch(err => console.error('❌ Error de conexión:', err));
