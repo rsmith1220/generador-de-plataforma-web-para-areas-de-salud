@@ -53,7 +53,7 @@ app.post('/api/login', async (req, res) => {
       [email]
     );
 
-    if (result.rows.length === 0) {
+    if (!result || !result.rows || result.rows.length === 0) {
       return res.status(401).json({ error: 'Usuario no encontrado' });
     }
 
@@ -142,7 +142,7 @@ app.get('/api/patients/:id', async (req, res) => {
       [id]
     );
 
-    if (result.rows.length === 0) {
+    if (!result || !result.rows || result.rows.length === 0) {
       return res.status(404).json({ error: 'Paciente no encontrado' });
     }
 
@@ -184,7 +184,7 @@ app.put('/api/patients/:id', async (req, res) => {
       [nombre, edad, genero, telefono, id]
     );
 
-    if (result.rowCount === 0) {
+    if (!result || typeof result.rowCount !== 'number' || result.rowCount === 0) {
       return res.status(404).json({ error: 'Paciente no encontrado' });
     }
 
@@ -205,7 +205,7 @@ app.delete('/api/patients/:id', async (req, res) => {
       [id]
     );
 
-    if (result.rowCount === 0) {
+    if (!result || typeof result.rowCount !== 'number' || result.rowCount === 0) {
       return res.status(404).json({ error: 'Paciente no encontrado' });
     }
 
@@ -229,5 +229,5 @@ if (process.env.NODE_ENV !== 'test' && typeof pool.connect === 'function') {
     });
   }
   
-  module.exports = app;
+  module.exports = { app, pool };
   
