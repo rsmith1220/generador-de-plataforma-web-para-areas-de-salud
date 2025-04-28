@@ -71,3 +71,22 @@ describe('Register Component', () => {
     }));
   });
 });
+
+test('muestra error si falla registro', async () => {
+  global.fetch = jest.fn(() => Promise.resolve({ ok: false }));
+
+  render(
+    <MemoryRouter>
+      <Register />
+    </MemoryRouter>
+  );
+
+  fireEvent.change(screen.getByPlaceholderText(/nombre/i), { target: { value: 'Error' } });
+  fireEvent.change(screen.getByPlaceholderText(/correo/i), { target: { value: 'error@example.com' } });
+  fireEvent.change(screen.getByPlaceholderText(/contraseña/i), { target: { value: 'errorpass' } });
+  fireEvent.change(screen.getByPlaceholderText(/clinic id/i), { target: { value: '1' } });
+
+  fireEvent.click(screen.getByRole('button', { name: /registrarse/i }));
+
+  expect(global.fetch).toHaveBeenCalledTimes(1);
+});

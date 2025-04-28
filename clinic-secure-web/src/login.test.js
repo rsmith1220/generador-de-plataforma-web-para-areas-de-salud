@@ -59,3 +59,23 @@ describe('Login Component', () => {
     expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true);
   });
 });
+
+test('muestra error si falla login', async () => {
+  const mockSetIsAuthenticated = jest.fn();
+  global.fetch = jest.fn(() => Promise.resolve({ ok: false }));
+
+  render(
+    <MemoryRouter>
+      <Login setIsAuthenticated={mockSetIsAuthenticated} />
+    </MemoryRouter>
+  );
+
+  fireEvent.change(screen.getByPlaceholderText(/correo/i), { target: { value: 'fallo@mail.com' } });
+  fireEvent.change(screen.getByPlaceholderText(/contraseña/i), { target: { value: 'wrongpass' } });
+
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: /ingresar/i }));
+  });
+
+  expect(mockSetIsAuthenticated).not.toHaveBeenCalled();
+});

@@ -38,6 +38,12 @@ test('renderiza el dashboard con título de pacientes', () => {
 });
 
 test('filtra pacientes por nombre', async () => {
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      json: () => Promise.resolve([{ id: 1, nombre: 'Juan Perez' }]),
+    })
+  );
+
   render(
     <MemoryRouter>
       <Dashboard />
@@ -46,7 +52,7 @@ test('filtra pacientes por nombre', async () => {
 
   const input = await screen.findByPlaceholderText('Buscar paciente');
   fireEvent.change(input, { target: { value: 'Juan' } });
-  expect(screen.getByText('Juan Perez')).toBeInTheDocument();
+  expect(await screen.findByText('Juan Perez')).toBeInTheDocument();
 });
 
 test('muestra mensaje si no hay pacientes', async () => {
@@ -77,4 +83,28 @@ test('botón cerrar sesión elimina datos de localStorage', async () => {
 
   expect(Storage.prototype.removeItem).toHaveBeenCalledWith('usuario_id');
   expect(Storage.prototype.removeItem).toHaveBeenCalledWith('clinica_id');
+});
+
+test('maneja error al cargar pacientes', async () => {
+  fetch.mockImplementationOnce(() => Promise.reject(new Error('Fallo en fetch')));
+
+  render(
+    <MemoryRouter>
+      <Dashboard />
+    </MemoryRouter>
+  );
+
+  expect(await screen.findByText(/no hay pacientes registrados/i)).toBeInTheDocument();
+});
+
+test('filtrar paciente inexistente muestra no encontrado', async () => {
+  render(
+    <MemoryRouter>
+      <Dashboard />
+    </MemoryRouter>
+  );
+
+  const input = await screen.findByPlaceholderText('Buscar paciente');
+  fireEvent.change(input, { target: { value: 'NombreInexistente' } });
+  expect(screen.getByText(/no hay pacientes registrados/i)).toBeInTheDocument();
 });
