@@ -18,3 +18,6 @@ export async function loginUser(username, password) {
     }
 }
 
+export function getApiUrl() {
+    return "http://localhost:5000/api";
+}
