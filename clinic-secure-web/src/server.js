@@ -52,8 +52,7 @@ app.post('/api/login', async (req, res) => {
       'SELECT id, nombre, email, password, clinica_id FROM usuarios WHERE email = $1 LIMIT 1',
       [email]
     );
-
-    if (!result || !result.rows || result.rows.length === 0) {
+    if (!result?.rows?.length) {
       return res.status(401).json({ error: 'Usuario no encontrado' });
     }
 
