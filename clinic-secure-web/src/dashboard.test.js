@@ -5,7 +5,7 @@ jest.mock('react-router', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import Dashboard from './Dashboard';
 
@@ -118,4 +118,41 @@ test('redirige a login si no hay usuario_id', async () => {
   );
 
   expect(mockNavigate).toHaveBeenCalledWith('/login');
+});
+
+test('input de búsqueda está presente en el dashboard', async () => {
+  render(
+    <MemoryRouter>
+      <Dashboard />
+    </MemoryRouter>
+  );
+  const input = await screen.findByPlaceholderText('Buscar paciente');
+  expect(input).toBeInTheDocument();
+});
+
+test('renderiza nombres de pacientes si existen', async () => {
+  Storage.prototype.getItem = jest.fn((key) => {
+    if (key === 'usuario_id') return '5';
+    if (key === 'clinica_id') return '1';
+    return null;
+  });
+
+  const mockPatients = [
+    { id: 1, nombre: 'Juan Pérez' },
+    { id: 2, nombre: 'Ana Gómez' }
+  ];
+
+  jest.spyOn(global, 'fetch').mockResolvedValueOnce({
+    ok: true,
+    json: async () => mockPatients,
+  });
+
+  render(
+    <MemoryRouter>
+      <Dashboard />
+    </MemoryRouter>
+  );
+
+  expect(await screen.findByText('Juan Pérez')).toBeInTheDocument();
+  expect(await screen.findByText('Ana Gómez')).toBeInTheDocument();
 });
