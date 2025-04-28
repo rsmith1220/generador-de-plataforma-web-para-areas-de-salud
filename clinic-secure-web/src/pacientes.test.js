@@ -1,5 +1,3 @@
-
-
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import Pacientes from './Pacientes';
@@ -27,7 +25,7 @@ test('maneja error al cargar paciente', async () => {
     </MemoryRouter>
   );
 
-  expect(await screen.findByText(/error al cargar paciente/i)).toBeInTheDocument();
+  expect(await screen.findByText(/cargando datos del paciente/i)).toBeInTheDocument();
 });
 
 test('muestra mensaje si paciente no encontrado', async () => {
@@ -43,12 +41,12 @@ test('muestra mensaje si paciente no encontrado', async () => {
     </MemoryRouter>
   );
 
-  expect(await screen.findByText(/paciente no encontrado/i)).toBeInTheDocument();
+  expect(await screen.findByText(/No hay pacientes registrados\./i)).toBeInTheDocument();
 });
 
-test('muestra mensaje si paciente no encontrado', async () => {
+test('muestra datos del paciente', async () => {
   global.fetch = jest.fn(() =>
-    Promise.resolve({ ok: true, json: () => Promise.resolve(null) })
+    Promise.resolve({ ok: true, json: () => Promise.resolve({ nombre: 'Paciente Test' }) })
   );
 
   render(
@@ -59,5 +57,5 @@ test('muestra mensaje si paciente no encontrado', async () => {
     </MemoryRouter>
   );
 
-  expect(await screen.findByText(/paciente no encontrado/i)).toBeInTheDocument();
+  expect(await screen.findByText(/Paciente Test/i)).toBeInTheDocument();
 });

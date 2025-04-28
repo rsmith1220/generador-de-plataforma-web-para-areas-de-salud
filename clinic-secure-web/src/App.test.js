@@ -7,3 +7,10 @@ test('renderiza la app sin errores y muestra el formulario de login', () => {
   const titulo = screen.getByText(/inicia sesión/i);
   expect(titulo).toBeInTheDocument();
 });
+
+test('navega al registro', () => {
+  window.history.pushState({}, 'Registro', '/register');
+  render(<App />);
+  const titulo = screen.getByText(/regístrate/i);
+  expect(titulo).toBeInTheDocument();
+});

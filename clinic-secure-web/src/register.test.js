@@ -1,6 +1,10 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import Register from './Register';
+
+beforeAll(() => {
+  window.alert = jest.fn();
+});
 
 describe('Register Component', () => {
   test('renderiza el formulario de registro', () => {
@@ -37,7 +41,7 @@ describe('Register Component', () => {
     expect(screen.getByPlaceholderText(/clinic id/i)).toHaveValue(1);
   });
 
-  test('envía el formulario', () => {
+  test('envía el formulario', async () => {
     global.fetch = jest.fn(() =>
       Promise.resolve({
         ok: true,
@@ -56,7 +60,9 @@ describe('Register Component', () => {
     fireEvent.change(screen.getByPlaceholderText(/contraseña/i), { target: { value: 'password456' } });
     fireEvent.change(screen.getByPlaceholderText(/clinic id/i), { target: { value: '2' } });
 
-    fireEvent.click(screen.getByRole('button', { name: /registrarse/i }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /registrarse/i }));
+    });
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(global.fetch).toHaveBeenCalledWith('http://localhost:5000/api/register', expect.objectContaining({
@@ -73,7 +79,12 @@ describe('Register Component', () => {
 });
 
 test('muestra error si falla registro', async () => {
-  global.fetch = jest.fn(() => Promise.resolve({ ok: false }));
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      ok: false,
+      json: () => Promise.resolve({ error: 'Some error' }),
+    })
+  );
 
   render(
     <MemoryRouter>

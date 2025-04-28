@@ -2,6 +2,10 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import Login from './Login';
 
+beforeAll(() => {
+  window.alert = jest.fn();
+});
+
 describe('Login Component', () => {
   test('renderiza el formulario de login', () => {
     render(
@@ -62,7 +66,12 @@ describe('Login Component', () => {
 
 test('muestra error si falla login', async () => {
   const mockSetIsAuthenticated = jest.fn();
-  global.fetch = jest.fn(() => Promise.resolve({ ok: false }));
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      ok: false,
+      json: () => Promise.resolve({ error: 'Some error' }),
+    })
+  );
 
   render(
     <MemoryRouter>
