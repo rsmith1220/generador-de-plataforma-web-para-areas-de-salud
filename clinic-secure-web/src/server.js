@@ -141,7 +141,7 @@ app.get('/api/patients/:id', async (req, res) => {
       [id]
     );
 
-    if (!result || !result.rows || result.rows.length === 0) {
+    if (!result?.rows?.length) {
       return res.status(404).json({ error: 'Paciente no encontrado' });
     }
 

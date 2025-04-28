@@ -52,12 +52,19 @@ const Dashboard = () => {
 
       <div className="patients-list">
         {filteredPatients.length > 0 ? (
-          filteredPatients.map((patient, index) => (
+          filteredPatients.map((patient) => (
             <div
-              key={index}
+              key={patient.id}
               className="patient-card"
               onClick={() => navigate(`/paciente/${patient.id}`)}
               style={{ cursor: 'pointer' }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  navigate(`/paciente/${patient.id}`);
+                }
+              }}
             >
               {patient.nombre}
             </div>
