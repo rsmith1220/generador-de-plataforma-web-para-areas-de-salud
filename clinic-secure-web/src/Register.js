@@ -11,6 +11,10 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    if (!nombre || !email || !password || !clinicaId) {
+      alert('Por favor llena todos los campos.');
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:5000/api/register', {

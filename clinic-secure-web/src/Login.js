@@ -9,6 +9,10 @@ const Login = ({ setIsAuthenticated }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!email || !password) {
+      alert('Por favor llena todos los campos.');
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:5000/api/login', {

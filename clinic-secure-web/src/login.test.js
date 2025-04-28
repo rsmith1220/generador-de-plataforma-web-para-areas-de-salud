@@ -63,6 +63,23 @@ describe('Login Component', () => {
     expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true);
   });
 
+  test('no permite enviar formulario si faltan campos', async () => {
+    global.fetch = jest.fn();
+
+    render(
+      <MemoryRouter>
+        <Login setIsAuthenticated={() => {}} />
+      </MemoryRouter>
+    );
+
+    // No llenamos los campos y tratamos de enviar
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /ingresar/i }));
+    });
+
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(window.alert).toHaveBeenCalled();
+  });
 });
 
 test('muestra error si falla login', async () => {

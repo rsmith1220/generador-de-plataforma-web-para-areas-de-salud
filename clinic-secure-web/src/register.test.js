@@ -4,6 +4,7 @@ import Register from './Register';
 
 beforeAll(() => {
   window.alert = jest.fn();
+  global.fetch = jest.fn(); // 🔥 Agregado para evitar el error de matcher
 });
 
 describe('Register Component', () => {
@@ -39,6 +40,24 @@ describe('Register Component', () => {
     expect(screen.getByPlaceholderText(/contraseña/i)).toHaveValue('password123');
     // For type="number", value is string unless converted; check string:
     expect(screen.getByPlaceholderText(/clinic id/i)).toHaveValue(1);
+  });
+
+  test('no permite enviar formulario si faltan campos', async () => {
+    render(
+      <MemoryRouter>
+        <Register />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByPlaceholderText(/nombre/i), { target: { value: 'Solo Nombre' } });
+    // No llenamos los demás campos
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /registrarse/i }));
+    });
+
+    expect(window.alert).toHaveBeenCalledWith('Por favor llena todos los campos.');
+    expect(global.fetch).not.toHaveBeenCalled();
   });
 
   test('envía el formulario', async () => {
@@ -85,6 +104,25 @@ describe('Register Component', () => {
     );
 
     // No llenamos ningún campo y tratamos de enviar
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /registrarse/i }));
+    });
+
+    expect(window.alert).toHaveBeenCalled();
+  });
+
+  test('muestra alerta si el correo no es válido', async () => {
+    render(
+      <MemoryRouter>
+        <Register />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByPlaceholderText(/nombre/i), { target: { value: 'Juan' } });
+    fireEvent.change(screen.getByPlaceholderText(/correo/i), { target: { value: 'correo-no-valido' } }); // no es un correo válido
+    fireEvent.change(screen.getByPlaceholderText(/contraseña/i), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByPlaceholderText(/clinic id/i), { target: { value: '1' } });
+
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /registrarse/i }));
     });
