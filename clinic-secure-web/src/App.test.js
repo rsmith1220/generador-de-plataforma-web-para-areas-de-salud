@@ -14,3 +14,10 @@ test('navega al registro', () => {
   const titulo = screen.getByText(/regístrate/i);
   expect(titulo).toBeInTheDocument();
 });
+
+test('redirige a login para rutas no existentes', () => {
+  window.history.pushState({}, 'No existe', '/ruta-no-existe');
+  render(<App />);
+  const titulo = screen.getByText(/inicia sesión/i);
+  expect(titulo).toBeInTheDocument();
+});

@@ -229,5 +229,5 @@ if (process.env.NODE_ENV !== 'test' && typeof pool.connect === 'function') {
     });
   }
   
-  module.exports = { app, pool };
+  module.exports = { app, pool, createPool };
   

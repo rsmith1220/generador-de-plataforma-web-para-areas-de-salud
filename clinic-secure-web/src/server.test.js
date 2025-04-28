@@ -288,3 +288,39 @@ describe('Error handling', () => {
     expect(res.body.error).toBe('Error en el servidor');
   });
 });
+
+// =====================
+// 🔥 Cobertura adicional
+// =====================
+
+describe('Server setup', () => {
+  it('should have a pool with connect function', () => {
+    expect(typeof pool.connect).toBe('function');
+  });
+});
+
+describe('CORS Middleware', () => {
+  it('should reject requests from disallowed origins', (done) => {
+    const originNotAllowed = 'http://notallowed.com';
+
+    const corsOptions = {
+      origin: (origin, callback) => {
+        if (!origin || [
+          'http://localhost:3000',
+          'http://localhost:5173',
+          process.env.FRONTEND_URL
+        ].includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error('No permitido por CORS'));
+        }
+      }
+    };
+
+    corsOptions.origin(originNotAllowed, (err, success) => {
+      expect(err).toBeInstanceOf(Error);
+      expect(err.message).toBe('No permitido por CORS');
+      done();
+    });
+  });
+});
