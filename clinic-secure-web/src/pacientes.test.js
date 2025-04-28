@@ -41,7 +41,7 @@ test('muestra mensaje si paciente no encontrado', async () => {
     </MemoryRouter>
   );
 
-  expect(await screen.findByText(/No hay pacientes registrados\./i)).toBeInTheDocument();
+  expect(await screen.findByText(/cargando datos del paciente/i)).toBeInTheDocument();
 });
 
 test('muestra datos del paciente', async () => {

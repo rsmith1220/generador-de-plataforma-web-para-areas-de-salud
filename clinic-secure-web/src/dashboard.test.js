@@ -25,6 +25,14 @@ beforeAll(() => {
   );
 });
 
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
 test('renderiza el dashboard con título de pacientes', () => {
   render(
     <MemoryRouter>
@@ -38,7 +46,7 @@ test('renderiza el dashboard con título de pacientes', () => {
 test('filtra pacientes por nombre', async () => {
   global.fetch = jest.fn(() =>
     Promise.resolve({
-      json: () => Promise.resolve([{ id: 1, nombre: 'Juan Perez' }]),
+      json: () => Promise.resolve([{ id: 22, nombre: 'Esteban Cruz' }]),
     })
   );
 
@@ -49,8 +57,8 @@ test('filtra pacientes por nombre', async () => {
   );
 
   const input = await screen.findByPlaceholderText('Buscar paciente');
-  fireEvent.change(input, { target: { value: 'Juan' } });
-  expect(await screen.findByText('Juan Perez')).toBeInTheDocument();
+  fireEvent.change(input, { target: { value: 'Esteban' } });
+  expect(await screen.findByText('Esteban Cruz')).toBeInTheDocument();
 });
 
 test('muestra mensaje si no hay pacientes', async () => {
@@ -105,4 +113,20 @@ test('filtrar paciente inexistente muestra no encontrado', async () => {
   const input = await screen.findByPlaceholderText('Buscar paciente');
   fireEvent.change(input, { target: { value: 'NombreInexistente' } });
   expect(screen.getByText(/no hay pacientes registrados/i)).toBeInTheDocument();
+});
+
+test('renderiza pacientes sin búsqueda activa', async () => {
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      json: () => Promise.resolve([{ id: 5, nombre: 'Carlos López' }]),
+    })
+  );
+
+  render(
+    <MemoryRouter>
+      <Dashboard />
+    </MemoryRouter>
+  );
+
+  expect(await screen.findByText('Carlos López')).toBeInTheDocument();
 });
