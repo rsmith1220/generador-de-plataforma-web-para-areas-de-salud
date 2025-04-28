@@ -62,6 +62,7 @@ describe('Login Component', () => {
     expect(Storage.prototype.setItem).toHaveBeenCalledWith('clinica_id', '456');
     expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true);
   });
+
 });
 
 test('muestra error si falla login', async () => {

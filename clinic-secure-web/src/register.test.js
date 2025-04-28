@@ -76,6 +76,21 @@ describe('Register Component', () => {
       }),
     }));
   });
+
+  test('muestra alerta si faltan campos obligatorios', async () => {
+    render(
+      <MemoryRouter>
+        <Register />
+      </MemoryRouter>
+    );
+
+    // No llenamos ningún campo y tratamos de enviar
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /registrarse/i }));
+    });
+
+    expect(window.alert).toHaveBeenCalled();
+  });
 });
 
 test('muestra error si falla registro', async () => {

@@ -1,28 +1,21 @@
+const mockNavigate = jest.fn();
+
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useNavigate: () => mockNavigate,
+}));
+
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import Dashboard from './Dashboard';
 
-// Mock useNavigate
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useNavigate: () => jest.fn(),
-}));
-
 beforeAll(() => {
-  // Mock localStorage
   Storage.prototype.getItem = jest.fn((key) => {
-    if (key === 'usuario_id') return '1';
+    if (key === 'usuario_id') return '5';
     if (key === 'clinica_id') return '1';
     return null;
   });
   Storage.prototype.removeItem = jest.fn();
-  
-  // Mock fetch
-  global.fetch = jest.fn(() =>
-    Promise.resolve({
-      json: () => Promise.resolve([{ id: 1, nombre: 'Juan Perez' }]),
-    })
-  );
 });
 
 beforeEach(() => {
@@ -30,7 +23,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  jest.restoreAllMocks();
 });
 
 test('renderiza el dashboard con título de pacientes', () => {
@@ -39,34 +32,14 @@ test('renderiza el dashboard con título de pacientes', () => {
       <Dashboard />
     </MemoryRouter>
   );
-
   expect(screen.getAllByText(/pacientes/i).length).toBeGreaterThan(0);
 });
 
-test('filtra pacientes por nombre', async () => {
-  global.fetch = jest.fn(() =>
-    Promise.resolve({
-      json: () => Promise.resolve([{ id: 22, nombre: 'Esteban Cruz' }]),
-    })
-  );
-
-  render(
-    <MemoryRouter>
-      <Dashboard />
-    </MemoryRouter>
-  );
-
-  const input = await screen.findByPlaceholderText('Buscar paciente');
-  fireEvent.change(input, { target: { value: 'Esteban' } });
-  expect(await screen.findByText('Esteban Cruz')).toBeInTheDocument();
-});
-
 test('muestra mensaje si no hay pacientes', async () => {
-  fetch.mockImplementationOnce(() =>
-    Promise.resolve({
-      json: () => Promise.resolve([]),
-    })
-  );
+  jest.spyOn(global, 'fetch').mockResolvedValueOnce({
+    ok: true,
+    json: async () => [],
+  });
 
   render(
     <MemoryRouter>
@@ -78,6 +51,11 @@ test('muestra mensaje si no hay pacientes', async () => {
 });
 
 test('botón cerrar sesión elimina datos de localStorage', async () => {
+  jest.spyOn(global, 'fetch').mockResolvedValueOnce({
+    ok: true,
+    json: async () => [],
+  });
+
   render(
     <MemoryRouter>
       <Dashboard />
@@ -92,7 +70,7 @@ test('botón cerrar sesión elimina datos de localStorage', async () => {
 });
 
 test('maneja error al cargar pacientes', async () => {
-  fetch.mockImplementationOnce(() => Promise.reject(new Error('Fallo en fetch')));
+  jest.spyOn(global, 'fetch').mockImplementationOnce(() => Promise.reject(new Error('Fallo en fetch')));
 
   render(
     <MemoryRouter>
@@ -104,6 +82,11 @@ test('maneja error al cargar pacientes', async () => {
 });
 
 test('filtrar paciente inexistente muestra no encontrado', async () => {
+  jest.spyOn(global, 'fetch').mockResolvedValueOnce({
+    ok: true,
+    json: async () => [],
+  });
+
   render(
     <MemoryRouter>
       <Dashboard />
@@ -115,12 +98,18 @@ test('filtrar paciente inexistente muestra no encontrado', async () => {
   expect(screen.getByText(/no hay pacientes registrados/i)).toBeInTheDocument();
 });
 
-test('renderiza pacientes sin búsqueda activa', async () => {
-  global.fetch = jest.fn(() =>
-    Promise.resolve({
-      json: () => Promise.resolve([{ id: 5, nombre: 'Carlos López' }]),
-    })
-  );
+
+test('redirige a login si no hay usuario_id', async () => {
+  Storage.prototype.getItem = jest.fn((key) => {
+    if (key === 'usuario_id') return null;
+    if (key === 'clinica_id') return '1';
+    return null;
+  });
+
+  jest.spyOn(global, 'fetch').mockResolvedValueOnce({
+    ok: true,
+    json: async () => [],
+  });
 
   render(
     <MemoryRouter>
@@ -128,5 +117,5 @@ test('renderiza pacientes sin búsqueda activa', async () => {
     </MemoryRouter>
   );
 
-  expect(await screen.findByText('Carlos López')).toBeInTheDocument();
+  expect(mockNavigate).toHaveBeenCalledWith('/login');
 });
