@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import Login from './Login';
+import Login from '../src/Login';
 
 beforeAll(() => {
   window.alert = jest.fn();

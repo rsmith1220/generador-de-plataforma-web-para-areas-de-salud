@@ -38,7 +38,7 @@ jest.mock('pg', () => {
 });
 
 const request = require('supertest');
-const { app, pool } = require('./server');
+const { app, pool } = require('../src/server');
 
 describe('API Endpoints', () => {
   describe('POST /api/login', () => {

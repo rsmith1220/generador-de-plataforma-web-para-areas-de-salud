@@ -7,7 +7,7 @@ jest.mock('react-router', () => ({
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import Dashboard from './Dashboard';
+import Dashboard from '../src/Dashboard';
 
 beforeAll(() => {
   Storage.prototype.getItem = jest.fn((key) => {

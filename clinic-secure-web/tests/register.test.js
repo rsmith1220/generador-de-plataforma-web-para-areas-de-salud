@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import Register from './Register';
+import Register from '../src/Register';
 
 beforeAll(() => {
   window.alert = jest.fn();

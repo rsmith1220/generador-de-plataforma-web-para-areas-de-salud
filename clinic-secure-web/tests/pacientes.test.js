@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import Pacientes from './Pacientes';
+import Pacientes from '../src/Pacientes';
 
 test('renderiza pacientes con mensaje de carga', () => {
   render(

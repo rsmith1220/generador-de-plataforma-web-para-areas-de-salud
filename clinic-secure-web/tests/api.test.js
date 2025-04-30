@@ -1,4 +1,4 @@
-import { getApiUrl } from './services/api';
+import { getApiUrl } from '../src/services/api';
 
 describe('api module', () => {
   it('should have a getApiUrl function', () => {

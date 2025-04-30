@@ -7,20 +7,34 @@ body {
   font-family: 'Arial', sans-serif;
 }
 
+/* Contenedor principal */
 .dashboard-container {
-  padding: 60px 80px;
+  max-width: 1400px; /* Aumenta el ancho máximo */
+  margin: 60px auto;
+  padding: 0 60px; /* Aumenta padding lateral */
   display: flex;
   flex-direction: column;
   gap: 40px;
 }
 
-
+/* Header */
 .dashboard-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 40px; /* Aumenta espacio entre items */
+  flex-wrap: wrap;
 }
 
+/* Sección izquierda del header */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 30px; /* Aumenta espacio entre "Pacientes" y la barra de búsqueda */
+  flex: 1; /* Hace que la izquierda ocupe más espacio */
+}
+
+/* Título */
 .dashboard-header h1 {
   font-size: 32px;
   font-weight: 600;
@@ -28,30 +42,14 @@ body {
   margin: 0;
 }
 
-
-/* Botón cerrar sesión */
-.logout-button {
-  background-color: #6D4AB0;
-  color: white;
-  padding: 10px 22px;
-  border: none;
-  border-radius: 25px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.logout-button:hover {
-  background-color: #5A3D90;
-}
-
+/* Buscar paciente */
 .search-container {
-  margin-top: 10px;
+  flex-grow: 1;
 }
 
 .search-container input {
   width: 100%;
-  padding: 14px 24px;
+  padding: 14px 28px;
   font-size: 16px;
   border: none;
   border-radius: 999px;
@@ -59,17 +57,33 @@ body {
   outline: none;
 }
 
+/* Botón cerrar sesión */
+.logout-button {
+  background-color: #6D4AB0;
+  color: white;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+}
 
+.logout-button:hover {
+  background-color: #5A3D90;
+}
+
+/* Lista de pacientes */
 .patients-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-
-/* Tarjetas individuales */
+/* Tarjeta de paciente */
 .patient-card {
-  padding: 16px 20px;
+  padding: 20px 24px;
   background-color: #dddddd;
   border-radius: 10px;
   font-size: 16px;
@@ -83,7 +97,7 @@ body {
   background-color: #d0d0d0;
 }
 
-/* Mensaje vacío */
+/* Si no hay pacientes */
 .no-patients {
   text-align: center;
   color: #999;

@@ -28,52 +28,53 @@ const Dashboard = () => {
     patient.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // 🔥 Agrega AQUÍ esta función debajo de filteredPatients
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('usuario_id');
     localStorage.removeItem('clinica_id');
     navigate('/login');
   };
-
   return (
     <div className="dashboard-container">
-      <div className="dashboard-header">
-        <h1>Pacientes</h1>
-        <button className="logout-button" onClick={handleLogout}>Cerrar sesión</button>
-      </div>
-
+  <div className="dashboard-header">
+    <div className="header-left">
+      <h1>Pacientes</h1>
       <div className="search-container">
         <input
           type="text"
           placeholder="Buscar paciente"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
         />
       </div>
-
-      <div className="patients-list">
-        {filteredPatients.length > 0 ? (
-          filteredPatients.map((patient) => (
-            <div
-              key={patient.id}
-              className="patient-card"
-              onClick={() => navigate(`/paciente/${patient.id}`)}
-              style={{ cursor: 'pointer' }}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  navigate(`/paciente/${patient.id}`);
-                }
-              }}
-            >
-              {patient.nombre}
-            </div>
-          ))
-        ) : (
-          <p className="no-patients">No hay pacientes registrados.</p>
-        )}
-      </div>
     </div>
+    <button className="logout-button" onClick={handleLogout}>
+      Cerrar sesión
+    </button>
+  </div>
+
+  <div className="patients-list">
+    {filteredPatients.length > 0 ? (
+      filteredPatients.map((patient, index) => (
+        <div
+          key={index}
+          className="patient-card"
+          onClick={() => navigate(`/paciente/${patient.id}`)}
+          style={{ cursor: 'pointer' }}
+        >
+          {patient.nombre}
+        </div>
+      ))
+    ) : (
+      <p className="no-patients">No hay pacientes registrados.</p>
+    )}
+  </div>
+</div>
+
   );
 };
 

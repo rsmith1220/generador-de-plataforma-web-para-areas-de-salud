@@ -21,32 +21,37 @@ const Pacientes = () => {
   }
 
   return (
-    <div className="paciente-container sin-caja">
+    <div className="paciente-container">
+  <div className="paciente-card">
+    <div className="paciente-header">
+      <img
+        src={paciente.foto_url || "/Portrait_Placeholder.png"}
+        alt={`Foto de ${paciente.nombre}`}
+        className="paciente-imagen"
+      />
       <h2 className="paciente-nombre">{paciente.nombre}</h2>
-
-      <div className="paciente-info">
-        <img
-          src={paciente.foto_url || "https://via.placeholder.com/150"}
-          alt={`Foto de ${paciente.nombre}`}
-          className="paciente-foto"
-        />
-
-        <div className="paciente-datos">
-          <div className="paciente-col">
-            <p>Edad: {paciente.edad}</p>
-            <p>Género: {paciente.genero}</p>
-            <p>Teléfono: {paciente.telefono}</p>
-          </div>
-          <div className="paciente-col">
-            <p>Cirugías: {paciente.cirugias || "No registrado"}</p>
-            <p>Tipo de sangre: {paciente.tipo_sangre || "No registrado"}</p>
-            <p>Medicamentos: {paciente.medicamentos || "No registrado"}</p>
-          </div>
-        </div>
-      </div>
-
-      <button className="paciente-volver" onClick={() => navigate(-1)}>Volver</button>
     </div>
+
+    <div className="paciente-info">
+      <div className="paciente-col">
+        <p>Edad: {paciente.edad}</p>
+        <p>Altura: {paciente.altura || "No registrada"}</p>
+        <p>Alergias: {paciente.alergias || "No registradas"}</p>
+        <p>Peso: {paciente.peso || "No registrado"}</p>
+      </div>
+      <div className="paciente-col">
+        <p>Cirugías: {paciente.cirugias || "No registradas"}</p>
+        <p>Tipo de sangre: {paciente.tipo_sangre || "No registrado"}</p>
+        <p>Medicamentos: {paciente.medicamentos || "No registrados"}</p>
+      </div>
+    </div>
+
+    <button className="paciente-volver" onClick={() => navigate(-1)}>
+      Volver
+    </button>
+  </div>
+</div>
+
   );
 };
 
