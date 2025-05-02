@@ -1,4 +1,5 @@
 require('dotenv').config();
+const helmet = require('helmet');
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
@@ -15,6 +16,23 @@ const allowedOrigins = [
   'http://localhost:5173',
   process.env.FRONTEND_URL // permite agregar URL de producción desde .env
 ];
+
+// 🛡️ Seguridad HTTP con Helmet
+app.use(helmet());
+
+// Opcional: política CSP personalizada
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "'unsafe-inline'"],
+    styleSrc: ["'self'", "'unsafe-inline'"],
+    formAction: ["'self'"],
+    frameAncestors: ["'none'"]
+  }
+}));
+
+// Protección contra clickjacking
+app.use(helmet.frameguard({ action: 'deny' }));
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -135,7 +153,7 @@ app.get('/api/patients/:id', async (req, res) => {
     const result = await pool.query(
       `SELECT id, nombre, edad, genero, telefono, clinica_id, 
               altura_cm, peso_kg, tipo_sangre, alergias, medicamentos, cirugias,
-              telefono_casa, telefono_celular
+              telefono_casa, telefono_celular, extras
        FROM pacientes
        WHERE id = $1`,
       [id]
@@ -145,12 +163,20 @@ app.get('/api/patients/:id', async (req, res) => {
       return res.status(404).json({ error: 'Paciente no encontrado' });
     }
 
-    res.json(result.rows[0]);
+    const paciente = result.rows[0];
+    const pacienteCompleto = {
+      ...paciente,
+      ...paciente.extras
+    };
+    delete pacienteCompleto.extras;
+
+    res.json(pacienteCompleto);
   } catch (err) {
     console.error('❌ Error obteniendo paciente por ID:', err);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
+
 
 // === AGREGAR PACIENTE ===
 app.post('/api/patients', async (req, res) => {
@@ -214,6 +240,29 @@ app.delete('/api/patients/:id', async (req, res) => {
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
+
+// === ACTUALIZAR CAMPOS EXTRAS DE UN PACIENTE ===
+app.put('/api/patients/:id/extras', async (req, res) => {
+  const { id } = req.params;
+  const nuevosExtras = req.body;
+
+  try {
+    const result = await pool.query(
+      'UPDATE pacientes SET extras = $1 WHERE id = $2 RETURNING extras',
+      [nuevosExtras, id]
+    );
+
+    if (!result.rows.length) {
+      return res.status(404).json({ error: 'Paciente no encontrado' });
+    }
+
+    res.json({ message: 'Información adicional actualizada', extras: result.rows[0].extras });
+  } catch (err) {
+    console.error('❌ Error actualizando extras:', err);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
 
 // === CONEXIÓN Y ARRANQUE ===
 if (process.env.NODE_ENV !== 'test' && typeof pool.connect === 'function') {

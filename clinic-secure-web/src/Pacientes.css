@@ -14,7 +14,7 @@
   background-color: #ffffff;
   border-radius: 20px;
   padding: 4rem 3rem;
-  width: 100%;
+  width: 200%;
   max-width: 1000px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   display: flex;
@@ -105,4 +105,124 @@
     width: 100%;
     text-align: center;
   }
+}
+.paciente-extra {
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: #f8f8ff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.paciente-extra h3 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+
+.paciente-extra p {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  background-color: #ffffff;
+  border-left: 4px solid #6c5ce7;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #444;
+}
+
+.form-edicion-extras {
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: #f3f1ff;
+  border: 2px solid #dcd6f7;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.form-edicion-extras > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-edicion-extras label {
+  font-weight: 600;
+  color: #444;
+  font-size: 1rem;
+}
+
+.form-edicion-extras input {
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+}
+
+.form-edicion-extras input:focus {
+  border-color: #6c5ce7;
+  outline: none;
+}
+
+.botones-edicion {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.boton-guardar,
+.boton-cancelar,
+.boton-editar {
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.boton-guardar {
+  background-color: #6c5ce7;
+  color: white;
+}
+
+.boton-guardar:hover {
+  background-color: #5a4bd0;
+}
+
+.boton-cancelar {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.boton-cancelar:hover {
+  background-color: #cccccc;
+}
+.boton-editar {
+  margin-top: 1rem;
+  background-color: #6c5ce7;
+  color: white;
+  padding: 0.7rem 2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.boton-editar:hover {
+  background-color: #5a4bd0;
 }

@@ -28,7 +28,7 @@ const Dashboard = () => {
     patient.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // 🔥 Agrega AQUÍ esta función debajo de filteredPatients
+
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
