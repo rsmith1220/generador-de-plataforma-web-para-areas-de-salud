@@ -24,9 +24,11 @@ const Login = ({ setIsAuthenticated }) => {
       const data = await response.json();
 
       if (response.ok) {
-        // 🧠 Guarda el usuario en localStorage
+        // Guarda el usuario , clinica y nombre en localStorage
         localStorage.setItem('usuario_id', data.id);
         localStorage.setItem('clinica_id', data.clinica_id);
+        localStorage.setItem('nombre', data.nombre);
+
 
         // ✅ Marca como autenticado
         setIsAuthenticated(true);

@@ -6,11 +6,18 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [patients, setPatients] = useState([]);
+  const [usuarioNombre, setUsuarioNombre] = useState('');
+
+  
 
   useEffect(() => {
     const usuarioId = localStorage.getItem('usuario_id');
     const clinicaId = localStorage.getItem('clinica_id');
-
+    const nombreGuardado = localStorage.getItem('nombre');
+    if (nombreGuardado) {
+      setUsuarioNombre(nombreGuardado);
+    }
+    
     if (!usuarioId) {
       navigate('/login');
       return;
@@ -41,21 +48,22 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
   <div className="dashboard-header">
-    <div className="header-left">
-      <h1>Pacientes</h1>
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Buscar paciente"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-      </div>
+  <div className="header-left">
+    <h1>Bienvenido, {usuarioNombre}</h1>
+    <div className="search-container">
+      <input
+        type="text"
+        placeholder="Buscar paciente"
+        value={searchTerm}
+        onChange={handleSearchChange}
+      />
     </div>
-    <button className="logout-button" onClick={handleLogout}>
-      Cerrar sesión
-    </button>
   </div>
+  <button className="logout-button" onClick={handleLogout}>
+    Cerrar sesión
+  </button>
+</div>
+
 
   <div className="patients-list">
     {filteredPatients.length > 0 ? (
