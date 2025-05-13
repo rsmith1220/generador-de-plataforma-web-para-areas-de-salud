@@ -14,25 +14,34 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
+  'http://localhost:5000',
   process.env.FRONTEND_URL // permite agregar URL de producción desde .env
 ];
 
 // 🛡️ Seguridad HTTP con Helmet
-app.use(helmet());
-
-// Opcional: política CSP personalizada
-app.use(helmet.contentSecurityPolicy({
-  directives: {
-    defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", "'unsafe-inline'"],
-    styleSrc: ["'self'", "'unsafe-inline'"],
-    formAction: ["'self'"],
-    frameAncestors: ["'none'"]
-  }
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'"],
+      formAction: ["'self'"],
+      frameAncestors: ["'none'"],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"]
+    }
+  },
+  frameguard: { action: 'deny' },
+  hidePoweredBy: true
 }));
 
-// Protección contra clickjacking
-app.use(helmet.frameguard({ action: 'deny' }));
+// 🚫 Evitar caché (colócalo aquí)
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  next();
+});
+
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -124,20 +133,36 @@ app.post('/api/register', async (req, res) => {
 app.get('/api/patients', async (req, res) => {
   const clinicaId = req.query.clinica_id;
 
-  if (!clinicaId) {
-    return res.status(400).json({ error: 'No se proporcionó una clínica válida' });
+  // Validación: debe ser un número entero positivo
+  if (!clinicaId || !/^\d+$/.test(clinicaId)) {
+    return res.status(400).json({ error: 'ID de clínica inválido' });
   }
+  
 
   try {
     const result = await pool.query(
-      `SELECT id, nombre, edad, genero, telefono, clinica_id, 
-              altura_cm, peso_kg, tipo_sangre, alergias, medicamentos, cirugias,
-              telefono_casa, telefono_celular
-       FROM pacientes
-       WHERE clinica_id = $1`,
+      `SELECT * FROM pacientes WHERE clinica_id = $1`,
       [clinicaId]
     );
-    res.json(result.rows);
+    
+    const pacientesLimpios = result.rows.map(paciente => {
+      const pacienteFiltrado = { ...paciente };
+    
+      // Si hay fecha de creación, conviértela a solo YYYY-MM-DD
+      if (pacienteFiltrado.created_at) {
+        pacienteFiltrado.fecha = pacienteFiltrado.created_at.toISOString().split('T')[0];
+      }
+    
+      // Eliminar campos sensibles o irrelevantes
+      delete pacienteFiltrado.created_at;
+      delete pacienteFiltrado.updated_at;
+      delete pacienteFiltrado.fecha_registro;
+    
+      return pacienteFiltrado;
+    });
+    
+    res.json(pacientesLimpios);
+    
   } catch (err) {
     console.error('Error obteniendo pacientes:', err);
     res.status(500).json({ error: 'Error en el servidor' });
@@ -169,6 +194,11 @@ app.get('/api/patients/:id', async (req, res) => {
       ...paciente.extras
     };
     delete pacienteCompleto.extras;
+
+    delete pacienteCompleto.created_at;
+    delete pacienteCompleto.updated_at;
+    delete pacienteCompleto.fecha_registro;
+    
 
     res.json(pacienteCompleto);
   } catch (err) {
@@ -263,6 +293,65 @@ app.put('/api/patients/:id/extras', async (req, res) => {
   }
 });
 
+// === AGREGAR NOTA MÉDICA A UN PACIENTE ===
+app.post('/api/patients/:id/notas', async (req, res) => {
+  const { id } = req.params;
+  const { nota } = req.body;
+  const fecha = new Date().toISOString().split('T')[0];
+
+  try {
+    // Obtiene las notas actuales
+    const result = await pool.query(
+      'SELECT extras FROM pacientes WHERE id = $1',
+      [id]
+    );
+
+    if (!result.rows.length) {
+      return res.status(404).json({ error: 'Paciente no encontrado' });
+    }
+
+    const extras = result.rows[0].extras || {};
+    const notasAnteriores = extras.notas_medicas || [];
+
+    const nuevasNotas = [...notasAnteriores, { fecha, nota }];
+    extras.notas_medicas = nuevasNotas;
+
+    // Actualiza en la base de datos
+    await pool.query(
+      'UPDATE pacientes SET extras = $1 WHERE id = $2',
+      [extras, id]
+    );
+
+    res.json({ message: 'Nota médica agregada', notas_medicas: nuevasNotas });
+  } catch (err) {
+    console.error('❌ Error agregando nota médica:', err);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+// === ACTUALIZAR TODAS LAS NOTAS MÉDICAS DEL PACIENTE ===
+app.put('/api/patients/:id/notas', async (req, res) => {
+  const { id } = req.params;
+  const nuevasNotas = req.body.notas_medicas;
+
+  try {
+    const result = await pool.query('SELECT extras FROM pacientes WHERE id = $1', [id]);
+    if (!result.rows.length) {
+      return res.status(404).json({ error: 'Paciente no encontrado' });
+    }
+
+    const extras = result.rows[0].extras || {};
+    extras.notas_medicas = nuevasNotas;
+
+    await pool.query('UPDATE pacientes SET extras = $1 WHERE id = $2', [extras, id]);
+
+    res.json({ message: 'Notas actualizadas', notas_medicas: nuevasNotas });
+  } catch (err) {
+    console.error('❌ Error actualizando notas médicas:', err);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
 
 // === CONEXIÓN Y ARRANQUE ===
 if (process.env.NODE_ENV !== 'test' && typeof pool.connect === 'function') {
@@ -270,6 +359,45 @@ if (process.env.NODE_ENV !== 'test' && typeof pool.connect === 'function') {
     .then(() => console.log('✅ Conectado a la base de datos PostgreSQL en RDS'))
     .catch(err => console.error('❌ Error de conexión:', err));
 }
+const path = require('path');
+
+
+app.use((req, res, next) => {
+  if (/\/\.[^\/]+/.test(req.url)) {
+    return res.status(403).send('Acceso denegado');
+  }
+  next();
+});
+
+
+// 🧱 Servir archivos estáticos del frontend compilado (React)
+app.use(express.static(path.join(__dirname, 'build'), {
+  setHeaders: (res) => {
+    // 🔐 Seguridad HTTP aplicada también al frontend
+    res.setHeader("Content-Security-Policy",
+      "default-src 'self'; " +
+      "script-src 'self'; " +
+      "style-src 'self'; " +
+      "form-action 'self'; " +
+      "frame-ancestors 'none'; " +
+      "object-src 'none'; " +
+      "base-uri 'self'"
+    );
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+
+    // 🚫 Evita almacenamiento en caché
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+  }
+}));
+
+
+// 🧭 Redirigir todas las rutas SPA al index.html
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname,  'build', 'index.html'));
+
+});
 
   if (require.main === module) {
     app.listen(PORT, () => {

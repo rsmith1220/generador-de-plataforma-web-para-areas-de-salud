@@ -1,42 +1,67 @@
 /* Pacientes.css */
 
-.paciente-container {
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden !important;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  scroll-behavior: smooth;
   background-color: #f7f4f9;
-  /* min-height: 100vh; */
-  padding: 3rem 1rem;
+}
+
+.paciente-container {
+  padding: 45rem 3rem 1rem;
+  background-color: #f7f4f9;
   font-family: 'Arial', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
+
+
 .paciente-card {
+  width: 100%;
+  max-width: 1000px;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 4rem 3rem;
   background-color: #ffffff;
   border-radius: 20px;
-  padding: 4rem 3rem;
-  width: 200%;
-  max-width: 1000px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 3rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
 .paciente-header {
+  min-height: 250px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
 }
 
+
 .paciente-imagen {
   width: 180px;
-  height: 180px;
-  border-radius: 20px;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
+  border-radius: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+
 
 .paciente-nombre {
   font-size: 1.8rem;
@@ -50,7 +75,7 @@
 .paciente-info {
   display: flex;
   justify-content: center;
-  gap: 8rem;
+  gap: 4rem;
   flex-wrap: wrap;
   width: 100%;
 }
@@ -185,7 +210,7 @@
 
 .boton-guardar,
 .boton-cancelar,
-.boton-editar {
+.boton-editar{
   padding: 0.8rem 2rem;
   font-size: 1rem;
   border: none;
@@ -225,4 +250,105 @@
 
 .boton-editar:hover {
   background-color: #5a4bd0;
+}
+
+.paciente-notas li {
+  min-width: 250px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+
+.paciente-notas li {
+  background-color: white;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid #6c5ce7;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  /* 💡 Añade esto: */
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+
+.botones-edicion button {
+  margin-right: 0.5rem;
+}
+.paciente-notas {
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: #eef2f7;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.paciente-notas textarea {
+  width: 100%;
+  height: 100px;
+  padding: 1rem;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  resize: vertical;
+}
+
+.paciente-notas ul {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scroll-snap-type: x mandatory;
+}
+.boton-eliminar {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.boton-eliminar:hover {
+  background-color: #cccccc;
+}
+.boton-eliminar {
+  margin-top: 1rem;
+  padding: 0.6rem 2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  
+}
+.texto-nota {
+  margin: 0.3rem 0 0 0;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.5;
+  color: #333;
+  font-size: 1rem;
+}
+.nota-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: white;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid #6c5ce7;
+  border-radius: 8px;
+  width: 100%;
+  word-break: break-word;
+}
+
+.nota-texto {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  white-space: pre-wrap; /* 🧠 importante para saltos de línea */
+  color: #444;
 }

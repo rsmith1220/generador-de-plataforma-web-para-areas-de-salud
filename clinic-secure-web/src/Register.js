@@ -73,7 +73,7 @@ const Register = () => {
         />
         <input
           type="number"
-          placeholder="Clinic ID"
+          placeholder="ID de la clinica"
           value={clinicaId}
           onChange={(e) => setClinicaId(e.target.value)}
           required

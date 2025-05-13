@@ -1,3 +1,10 @@
+#root, .App, main {
+  min-height: 100vh;
+  height: auto;
+  overflow: visible;
+}
+
+
 .App {
   text-align: center;
 }
